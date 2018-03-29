@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using OrganizerU.Interfaces;
 using OrganizerU.Models;
@@ -37,5 +36,4 @@ namespace OrganizerU.Repositorio
       return await context.User.ReplaceOneAsync(o => o.Id.Equals(_id), user);
     }
   }
-
 }
