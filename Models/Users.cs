@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace OrganizerU.Models
 {
-  public class User
+  public class Users
   {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
@@ -13,7 +13,7 @@ namespace OrganizerU.Models
     public string Username { get; set; }
     [Required]
     public string Password { get; set; }
-    public User(string Username, string Password){
+    public Users(string Username, string Password){
         this.Username = Username;
         this.Password = Password;
     }

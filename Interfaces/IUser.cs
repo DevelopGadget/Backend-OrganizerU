@@ -8,10 +8,10 @@ namespace OrganizerU.Interfaces
 {
   public interface IUser
   {
-    Task<IEnumerable<User>> Get();
-    Task<User> Get(string _id);
-    Task Add(User user);
-    Task<ReplaceOneResult> Update(string _id, User user);
+    Task<IEnumerable<Users>> Get();
+    Task<Users> Get(string _id);
+    Task Add(Users user);
+    Task<ReplaceOneResult> Update(string _id, Users user);
     Task<DeleteResult> Remove(string _id);
   }
 }

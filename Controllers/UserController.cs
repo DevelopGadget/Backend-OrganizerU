@@ -53,7 +53,7 @@ namespace OrganizerU.Controllers
     public void Delete(int id)
     {
     }
-    private void Authenticate(User login)
+    private void Authenticate(Users login)
     {
       User user = null;
       if (!isUniqueAsync(login))
@@ -67,7 +67,7 @@ namespace OrganizerU.Controllers
       {
         return false;
       }
-      foreach (User us in await _user.Get()){
+      foreach (Users us in await _user.Get()){
         if(us.Username.Equals(user.Username)) return false;
       }
       return true;

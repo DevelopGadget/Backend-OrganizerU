@@ -16,9 +16,9 @@ namespace OrganizerU.Models
       var Client = new MongoClient(Setting.Value.ConectionString);
       if (Client != null) { _database = Client.GetDatabase(Setting.Value.Database); }
     }
-    public IMongoCollection<User> User
+    public IMongoCollection<Users> User
     {
-      get { return _database.GetCollection<User>("Usuarios"); }
+      get { return _database.GetCollection<Users>("Usuarios"); }
     }
   }
 }
