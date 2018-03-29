@@ -18,11 +18,7 @@ namespace OrganizerU.Models
     }
     public IMongoCollection<User> User
     {
-      get { return _database.GetCollection<>(); }
-    }
-    public IMongoCollection<> Jugadores
-    {
-      get { return _database.GetCollection<>(); }
+      get { return _database.GetCollection<User>("Usuarios"); }
     }
   }
 }
