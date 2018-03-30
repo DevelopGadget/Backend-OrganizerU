@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using OrganizerU.Interfaces;
 using OrganizerU.Models;
 
@@ -24,11 +25,22 @@ namespace OrganizerU.Controllers
 
     [Authorize]
     [HttpGet("{id}")]
-    public string Get(string id)
+    public Task<string> Get(string id)
     {
-      return "value";
+      return this.GetUser(id);
     }
-
+    private async Task<string> GetUser(string id)
+    {
+      if (id.Length < 24)
+      {
+        return "Verifique el id";
+      }
+      if (await _user.Get(id) == null)
+      {
+        return "No hay documentos";
+      }
+      return JsonConvert.SerializeObject(await _user.Get(id));
+    }
     [AllowAnonymous]
     [HttpPost("Crear")]
     public async Task<IActionResult> CrearCuenta([FromBody]Users user)
@@ -42,7 +54,7 @@ namespace OrganizerU.Controllers
         if (await isUniqueAsync(user: user))
         {
           await _user.Add(user);
-          return Ok("Creado");
+          return Ok("Creado ");
         }
         else
         {
@@ -76,11 +88,11 @@ namespace OrganizerU.Controllers
     {
       if (string.IsNullOrEmpty(id) || id.Length < 24)
       {
-        return BadRequest("Id Invalid"); 
+        return BadRequest("Id Invalid");
       }
       if (await _user.Get(id) == null)
       {
-         return BadRequest("No ha coincidencias"); 
+        return BadRequest("No ha coincidencias");
       }
       if (ModelState.IsValid)
       {
@@ -92,7 +104,7 @@ namespace OrganizerU.Controllers
         }
         else
         {
-          return BadRequest("Hubo un error"); 
+          return BadRequest("Hubo un error");
         }
       }
       else
