@@ -1,5 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -53,22 +52,27 @@ namespace OrganizerU.Controllers
     public void Delete(int id)
     {
     }
-    private void Authenticate(Users login)
+    private async Task<bool> Authenticate(Users login)
     {
-      User user = null;
-      if (!isUniqueAsync(login))
+      if (login == null)
       {
+        return false;
       }
-
+      foreach (Users us in await _user.Get())
+      {
+        if (us.Username.Equals(login.Username) && us.Username.Equals(login.Password)) return true;
+      }
+      return false;
     }
-    private async Task<bool> isUniqueAsync(User user)
+    private async Task<bool> isUniqueAsync(Users user)
     {
       if (user == null)
       {
         return false;
       }
-      foreach (Users us in await _user.Get()){
-        if(us.Username.Equals(user.Username)) return false;
+      foreach (Users us in await _user.Get())
+      {
+        if (us.Username.Equals(user.Username)) return false;
       }
       return true;
     }
@@ -78,7 +82,7 @@ namespace OrganizerU.Controllers
       var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
       var token = new JwtSecurityToken(config["Jwt:Issuer"],
         config["Jwt:Issuer"],
-        expires: DateTime.Now.AddMinutes(30),
+        expires: System.DateTime.Now.AddMinutes(30),
         signingCredentials: creds);
       return new JwtSecurityTokenHandler().WriteToken(token);
     }
