@@ -42,7 +42,7 @@ namespace OrganizerU.Controllers
         if (await isUniqueAsync(user: user))
         {
           await _user.Add(user);
-          return Ok(200);
+          return Ok("Creado");
         }
         else
         {
@@ -72,14 +72,56 @@ namespace OrganizerU.Controllers
     }
     [Authorize]
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody]string value)
+    public async Task<IActionResult> PutAsync(string id, [FromBody]Users user)
     {
+      if (string.IsNullOrEmpty(id) || id.Length < 24)
+      {
+        return BadRequest("Id Invalid"); 
+      }
+      if (await _user.Get(id) == null)
+      {
+         return BadRequest("No ha coincidencias"); 
+      }
+      if (ModelState.IsValid)
+      {
+        user.Id = id;
+        var h = await _user.Update(id, user);
+        if (h.MatchedCount > 0)
+        {
+          return Ok("Modificado");
+        }
+        else
+        {
+          return BadRequest("Hubo un error"); 
+        }
+      }
+      else
+      {
+        return BadRequest(ModelState);
+      }
     }
 
     [Authorize]
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<IActionResult> Delete(string id)
     {
+      if (string.IsNullOrEmpty(id) || id.Length < 24)
+      {
+        return BadRequest("Id invalid");
+      }
+      if (await _user.Get(id) == null)
+      {
+        return BadRequest("Invalid Id");
+      }
+      var h = await _user.Remove(id);
+      if (h.DeletedCount > 0)
+      {
+        return Ok("Eliminado");
+      }
+      else
+      {
+        return BadRequest("Hubo un error");
+      }
     }
     private async Task<bool> Authenticate(Users login)
     {
