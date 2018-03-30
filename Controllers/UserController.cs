@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,11 +12,11 @@ using OrganizerU.Models;
 namespace OrganizerU.Controllers
 {
   [Route("[controller]")]
-  public class User : Controller
+  public class UserController : Controller
   {
     private IConfiguration _config;
     private readonly IUser _user;
-    public User(IConfiguration config, IUser user)
+    public UserController(IConfiguration config, IUser user)
     {
       this._config = config;
       this._user = user;
@@ -27,17 +29,25 @@ namespace OrganizerU.Controllers
       return "value";
     }
 
-    // POST api/values
+    [AllowAnonymous]
     [HttpPost("Crear")]
-    public void Post([FromBody]User User)
+    public async Task<IActionResult> CrearCuenta([FromBody]Users user)
     {
       if (!ModelState.IsValid)
       {
-        BadRequest();
+        return BadRequest(ModelState);
       }
       else
       {
-
+        if (await isUniqueAsync(user: user))
+        {
+          await _user.Add(user);
+          return BuildToken(user);
+        }
+        else
+        {
+          return BadRequest("Ya existe esa cuenta");
+        }
       }
     }
 
@@ -76,15 +86,28 @@ namespace OrganizerU.Controllers
       }
       return true;
     }
-    private string BuildToken(User user, IConfiguration config)
+    private IActionResult BuildToken(Users user)
     {
-      var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+      var claims = new[]
+      {
+          new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+          new Claim("miValor", "Lo que yo quiera"),
+          new Claim(JwtRegisteredClaimNames.Jti, System.Guid.NewGuid().ToString())
+      };
+      var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
       var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-      var token = new JwtSecurityToken(config["Jwt:Issuer"],
-        config["Jwt:Issuer"],
-        expires: System.DateTime.Now.AddMinutes(30),
+
+      var expiration = System.DateTime.Now.AddMinutes(30);
+      JwtSecurityToken token = new JwtSecurityToken(_config["Jwt:Issuer"],
+        _config["Jwt:Issuer"],
+        claims: claims,
+        expires: expiration,
         signingCredentials: creds);
-      return new JwtSecurityTokenHandler().WriteToken(token);
+      return Ok(new
+      {
+        token = new JwtSecurityTokenHandler().WriteToken(token),
+        expiration = expiration
+      });
     }
   }
 }
