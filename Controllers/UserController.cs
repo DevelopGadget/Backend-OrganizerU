@@ -22,9 +22,9 @@ namespace OrganizerU.Controllers
       this._user = user;
     }
 
-    // GET api/values/5
+    [Authorize]
     [HttpGet("{id}")]
-    public string Get(int id)
+    public string Get(string id)
     {
       return "value";
     }
@@ -42,7 +42,7 @@ namespace OrganizerU.Controllers
         if (await isUniqueAsync(user: user))
         {
           await _user.Add(user);
-          return BuildToken(user);
+          return Ok(200);
         }
         else
         {
@@ -50,14 +50,33 @@ namespace OrganizerU.Controllers
         }
       }
     }
-
-    // PUT api/values/5
+    [AllowAnonymous]
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login([FromBody]Users user)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+      else
+      {
+        if (await Authenticate(user))
+        {
+          return BuildToken(user);
+        }
+        else
+        {
+          return BadRequest("Usuario o Contraseña incorrecto");
+        }
+      }
+    }
+    [Authorize]
     [HttpPut("{id}")]
     public void Put(int id, [FromBody]string value)
     {
     }
 
-    // DELETE api/values/5
+    [Authorize]
     [HttpDelete("{id}")]
     public void Delete(int id)
     {
@@ -70,7 +89,7 @@ namespace OrganizerU.Controllers
       }
       foreach (Users us in await _user.Get())
       {
-        if (us.Username.Equals(login.Username) && us.Username.Equals(login.Password)) return true;
+        if (us.Username.Equals(login.Username) && us.Password.Equals(login.Password)) return true;
       }
       return false;
     }
