@@ -45,6 +45,7 @@ namespace OrganizerU
       });
       services.Configure<Settings>(o => { o.configuration = (IConfigurationRoot)Configuration; });
       services.AddTransient<IUser, User_Repositorio>();
+      services.AddTransient<IEstudiante, Estudiante_Repositorio>();
       services.AddMvc();
     }
 

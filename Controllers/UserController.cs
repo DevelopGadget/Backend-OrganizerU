@@ -1,4 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,15 +17,17 @@ namespace OrganizerU.Controllers {
   public class UserController : Controller {
     private IConfiguration _config;
     private readonly IUser _user;
-    public UserController (IConfiguration config, IUser user) {
+    private readonly IEstudiante _estudiante;
+    public UserController (IConfiguration config, IUser user, IEstudiante _estudiante) {
       this._config = config;
       this._user = user;
+      this._estudiante = _estudiante;
     }
 
     [Authorize]
     [HttpGet ("{id}")]
     public Task<string> Get (string id) {
-      return this.GetUser (id);
+      return GetUser (id);
     }
     private async Task<string> GetUser (string id) {
       if (id.Length < 24) {
@@ -43,6 +47,7 @@ namespace OrganizerU.Controllers {
       } else {
         if (await isUniqueAsync (user: user)) {
           await _user.Add (user);
+          await _estudiante.Add (new Estudiante (IdGet (user).Result));
           return Ok ("Creado ");
         } else {
           return BadRequest ("Ya existe esa cuenta");
@@ -57,9 +62,9 @@ namespace OrganizerU.Controllers {
         return BadRequest (ModelState);
       } else {
         if (await Authenticate (user)) {
-          return BuildToken (user);
+          return BuildToken (await _estudiante.Get (IdGet (user).Result), user);
         } else {
-          return BadRequest ("Usuario o Contraseña incorrecto");
+          return Unauthorized ();
         }
       }
     }
@@ -120,15 +125,23 @@ namespace OrganizerU.Controllers {
       }
       return true;
     }
-    private IActionResult BuildToken (Users user) {
+    private async Task<string> IdGet (Users user) {
+      if (user == null) {
+        return null;
+      }
+      foreach (Users us in await _user.Get ()) {
+        if (us.Username.Equals (user.Username)) return us.Id;
+      }
+      return null;
+    }
+    private IActionResult BuildToken (Estudiante estudiante, Users user) {
       var claims = new [] {
         new Claim (JwtRegisteredClaimNames.UniqueName, user.Username),
-        new Claim ("miValor", "Lo que yo quiera"),
+        new Claim ("Datos",  JsonConvert.SerializeObject(estudiante)),
         new Claim (JwtRegisteredClaimNames.Jti, System.Guid.NewGuid ().ToString ())
       };
       var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (_config["Jwt:Key"]));
       var creds = new SigningCredentials (key, SecurityAlgorithms.HmacSha256);
-
       var expiration = System.DateTime.Now.AddMinutes (30);
       JwtSecurityToken token = new JwtSecurityToken (_config["Jwt:Issuer"],
         _config["Jwt:Issuer"],

@@ -38,6 +38,7 @@ namespace OrganizerU.Models {
       this.Salon = salon;
       this.Creditos = creditos;
       this.Cortes = new List<double> ();
+      this.Archivos= new List<Stream>();
     }
   }
 }
