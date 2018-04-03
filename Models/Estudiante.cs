@@ -11,11 +11,10 @@ namespace OrganizerU.Models {
         public string Id { get; set; }
 
         [Required]
-        List<Semestre> Semestres { get; set; }
-        public Estudiante (string id, List<Semestre> Semestres) {
+        public List<Semestre> Semestres { get; set; }
+        public Estudiante (string id) {
             this.Id = id;
-            this.Semestres = new List<Semestre> (Semestres);
-            this.Semestres.Add(new Semestre(1,3));
+            this.Semestres = new List<Semestre> ();
         }
     }
 }

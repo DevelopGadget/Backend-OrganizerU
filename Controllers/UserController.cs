@@ -47,7 +47,7 @@ namespace OrganizerU.Controllers {
       } else {
         if (await isUniqueAsync (user: user)) {
           await _user.Add (user);
-          await _estudiante.Add (new Estudiante (IdGet (user).Result, new List<Semestre>()));
+          await _estudiante.Add (new Estudiante (IdGet (user).Result));
           return Ok ("Creado");
         } else {
           return BadRequest ("Ya existe esa cuenta");
@@ -138,7 +138,8 @@ namespace OrganizerU.Controllers {
     private IActionResult BuildToken (Estudiante estudiante, Users user) {
       var claims = new [] {
         new Claim (JwtRegisteredClaimNames.UniqueName, user.Username),
-        new Claim ("Datos",  estudiante.Id),
+        new Claim ("Role", "User"),
+        new Claim ("Datos",  JsonConvert.SerializeObject(estudiante)),
         new Claim (JwtRegisteredClaimNames.Jti, System.Guid.NewGuid ().ToString ())
       };
       var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (_config["Jwt:Key"]));
