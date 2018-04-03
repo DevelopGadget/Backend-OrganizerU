@@ -14,5 +14,5 @@ namespace OrganizerU.Models {
             this.Num_Cortes = num_Cortes;
             this.Materias = new List<Materia>();
         }
-    }
+  }
 }

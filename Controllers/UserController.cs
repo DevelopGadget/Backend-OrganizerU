@@ -47,8 +47,8 @@ namespace OrganizerU.Controllers {
       } else {
         if (await isUniqueAsync (user: user)) {
           await _user.Add (user);
-          await _estudiante.Add (new Estudiante (IdGet (user).Result));
-          return Ok ("Creado ");
+          await _estudiante.Add (new Estudiante (IdGet (user).Result, new List<Semestre>()));
+          return Ok ("Creado");
         } else {
           return BadRequest ("Ya existe esa cuenta");
         }
@@ -101,7 +101,8 @@ namespace OrganizerU.Controllers {
         return BadRequest ("Invalid Id");
       }
       var h = await _user.Remove (id);
-      if (h.DeletedCount > 0) {
+      var e = await _estudiante.Remove(id);
+      if (h.DeletedCount > 0 && e.DeletedCount > 0) {
         return Ok ("Eliminado");
       } else {
         return BadRequest ("Hubo un error");
@@ -137,7 +138,7 @@ namespace OrganizerU.Controllers {
     private IActionResult BuildToken (Estudiante estudiante, Users user) {
       var claims = new [] {
         new Claim (JwtRegisteredClaimNames.UniqueName, user.Username),
-        new Claim ("Datos",  JsonConvert.SerializeObject(estudiante)),
+        new Claim ("Datos",  estudiante.Id),
         new Claim (JwtRegisteredClaimNames.Jti, System.Guid.NewGuid ().ToString ())
       };
       var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (_config["Jwt:Key"]));
