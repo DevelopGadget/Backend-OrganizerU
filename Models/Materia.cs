@@ -2,9 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace OrganizerU.Models {
   public class Materia {
+    [BsonId]
+    [BsonRepresentation (BsonType.ObjectId)]
+    public string Id { get; set; }
+
     [Required]
     public DateTime HoraInicio { get; set; }
 
@@ -38,7 +44,7 @@ namespace OrganizerU.Models {
       this.Salon = salon;
       this.Creditos = creditos;
       this.Cortes = new List<double> ();
-      this.Archivos= new List<Stream>();
+      this.Archivos = new List<Stream> ();
     }
   }
 }
