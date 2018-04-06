@@ -26,17 +26,17 @@ namespace OrganizerU.Controllers {
 
     [Authorize]
     [HttpGet ("{id}")]
-    public Task<string> Get (string id) {
+    public Task<IActionResult> Get (string id) {
       return GetUser (id);
     }
-    private async Task<string> GetUser (string id) {
+    private async Task<IActionResult> GetUser (string id) {
       if (id.Length < 24) {
-        return "Verifique el id";
+        BadRequest ("No Hay Documentos");
       }
       if (await _user.Get (id) == null) {
-        return "No hay documentos";
+        BadRequest ("No Hay Documentos");
       }
-      return JsonConvert.SerializeObject (await _user.Get (id));
+      return Ok(JsonConvert.SerializeObject (await _user.Get (id)));
     }
 
     [AllowAnonymous]

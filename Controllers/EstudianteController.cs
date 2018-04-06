@@ -15,18 +15,24 @@ namespace OrganizerU.Controllers {
         public EstudianteController (IEstudiante _estudiante) => this._estudiante = _estudiante;
 
         [HttpGet]
-        public Task<string> Get (string  UserId) => GET (UserId);
+        public Task<IActionResult> Get (string UserId) => GET (UserId);
 
-        private async Task<string> GET (string UserId) {
-            if (await _estudiante.Get () == null) {
-                return "No hay documentos";
+        private async Task<IActionResult> GET (string UserId) {
+            if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
+                return BadRequest ("Id Invalid");
+            }
+            if (await _estudiante.Get (UserId) == null) {
+                return BadRequest ("No Hay Documentos");
             } else {
-                return JsonConvert.SerializeObject (await _estudiante.Get (UserId));
+                return Ok (JsonConvert.SerializeObject (await _estudiante.Get (UserId)));
             }
         }
 
         [HttpPut]
         public async Task<IActionResult> Put ([FromBody] Estudiante put, string UserId) {
+            if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
+                return BadRequest ("Id Invalid");
+            }
             if (ModelState.IsValid) {
                 put.Id = UserId;
                 var h = await _estudiante.Update (UserId, put);
@@ -42,6 +48,9 @@ namespace OrganizerU.Controllers {
 
         [HttpDelete]
         public async Task<IActionResult> Delete (string UserId) {
+            if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
+                return BadRequest ("Id Invalid");
+            }
             var e = await _estudiante.Remove (UserId);
             if (e.DeletedCount > 0) {
                 return Ok ("Eliminado");
