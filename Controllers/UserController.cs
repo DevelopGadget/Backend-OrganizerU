@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -30,82 +31,102 @@ namespace OrganizerU.Controllers {
       return GetUser (id);
     }
     private async Task<IActionResult> GetUser (string id) {
-      if (id.Length < 24) {
-        BadRequest ("No Hay Documentos");
+      try {
+        if (id.Length < 24) {
+          return BadRequest ("No Hay Documentos");
+        }
+        if (await _user.Get (id) == null) {
+          return BadRequest ("No Hay Documentos");
+        }
+        return Ok (JsonConvert.SerializeObject (await _user.Get (id)));
+      } catch (Exception) {
+        return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
       }
-      if (await _user.Get (id) == null) {
-        BadRequest ("No Hay Documentos");
-      }
-      return Ok(JsonConvert.SerializeObject (await _user.Get (id)));
     }
 
     [AllowAnonymous]
     [HttpPost ("Crear")]
     public async Task<IActionResult> CrearCuenta ([FromBody] Users user) {
-      if (!ModelState.IsValid) {
-        return BadRequest (ModelState);
-      } else {
-        if (await isUniqueAsync (user: user)) {
-          await _user.Add (user);
-          await _estudiante.Add (new Estudiante (IdGet (user).Result));
-          return Ok ("Creado");
+      try {
+        if (!ModelState.IsValid) {
+          return BadRequest (ModelState);
         } else {
-          return BadRequest ("Ya existe esa cuenta");
+          if (await isUniqueAsync (user: user)) {
+            await _user.Add (user);
+            await _estudiante.Add (new Estudiante (IdGet (user).Result));
+            return Ok ("Creado");
+          } else {
+            return BadRequest ("Ya existe esa cuenta");
+          }
         }
+      } catch (Exception) {
+        return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
       }
     }
 
     [AllowAnonymous]
     [HttpPost ("Login")]
     public async Task<IActionResult> Login ([FromBody] Users user) {
-      if (!ModelState.IsValid) {
-        return BadRequest (ModelState);
-      } else {
-        if (await Authenticate (user)) {
-          return BuildToken (await _estudiante.Get (IdGet (user).Result), user);
+      try {
+        if (!ModelState.IsValid) {
+          return BadRequest (ModelState);
         } else {
-          return Unauthorized ();
+          if (await Authenticate (user)) {
+            return BuildToken (await _estudiante.Get (IdGet (user).Result), user);
+          } else {
+            return Unauthorized ();
+          }
         }
+      } catch (Exception) {
+        return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
       }
     }
 
     [Authorize]
     [HttpPut ("{id}")]
     public async Task<IActionResult> Put (string id, [FromBody] Users user) {
-      if (string.IsNullOrEmpty (id) || id.Length < 24) {
-        return BadRequest ("Id Invalid");
-      }
-      if (await _user.Get (id) == null) {
-        return BadRequest ("No ha coincidencias");
-      }
-      if (ModelState.IsValid) {
-        user.Id = id;
-        var h = await _user.Update (id, user);
-        if (h.MatchedCount > 0) {
-          return Ok ("Modificado");
-        } else {
-          return BadRequest ("Hubo un error");
+      try {
+        if (string.IsNullOrEmpty (id) || id.Length < 24) {
+          return BadRequest ("Id Invalid");
         }
-      } else {
-        return BadRequest (ModelState);
+        if (await _user.Get (id) == null) {
+          return BadRequest ("No ha coincidencias");
+        }
+        if (ModelState.IsValid) {
+          user.Id = id;
+          var h = await _user.Update (id, user);
+          if (h.MatchedCount > 0) {
+            return Ok ("Modificado");
+          } else {
+            return BadRequest ("Hubo un error");
+          }
+        } else {
+          return BadRequest (ModelState);
+        }
+      } catch (Exception) {
+        return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
       }
     }
 
     [Authorize]
     [HttpDelete ("{id}")]
     public async Task<IActionResult> Delete (string id) {
-      if (string.IsNullOrEmpty (id) || id.Length < 24) {
-        return BadRequest ("Id invalid");
-      }
-      if (await _user.Get (id) == null) {
-        return BadRequest ("Invalid Id");
-      }
-      var h = await _user.Remove (id);
-      var e = await _estudiante.Remove(id);
-      if (h.DeletedCount > 0 && e.DeletedCount > 0) {
-        return Ok ("Eliminado");
-      } else {
-        return BadRequest ("Hubo un error");
+      try {
+        if (string.IsNullOrEmpty (id) || id.Length < 24) {
+          return BadRequest ("Id invalid");
+        }
+        if (await _user.Get (id) == null) {
+          return BadRequest ("Invalid Id");
+        }
+        var h = await _user.Remove (id);
+        var e = await _estudiante.Remove (id);
+        if (h.DeletedCount > 0 && e.DeletedCount > 0) {
+          return Ok ("Eliminado");
+        } else {
+          return BadRequest ("Hubo un error");
+        }
+      } catch (Exception) {
+        return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
       }
     }
     private async Task<bool> Authenticate (Users login) {
@@ -139,7 +160,7 @@ namespace OrganizerU.Controllers {
       var claims = new [] {
         new Claim (JwtRegisteredClaimNames.UniqueName, user.Username),
         new Claim ("Role", "User"),
-        new Claim ("Datos",  JsonConvert.SerializeObject(estudiante)),
+        new Claim ("Datos", JsonConvert.SerializeObject (estudiante)),
         new Claim (JwtRegisteredClaimNames.Jti, System.Guid.NewGuid ().ToString ())
       };
       var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (_config["Jwt:Key"]));
