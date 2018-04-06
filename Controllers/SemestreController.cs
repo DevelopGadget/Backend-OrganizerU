@@ -67,14 +67,63 @@ namespace OrganizerU.Controllers {
                     if (await ExisteAsync (semestre: semestre, UserId: UserId)) {
                         Estudiante es = await _estudiante.Get (UserId);
                         es.Semestres.Add (semestre);
-                        await _estudiante.Add (es);
-                        return Ok ("Creado");
+                        var h = await _estudiante.Update (UserId, es);
+                        if (h.MatchedCount > 0) {
+                            return Ok ("Creado");
+                        } else {
+                            return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                        }
                     } else {
                         return BadRequest ("Ya existe ese semestre");
                     }
                 }
             } catch (Exception) {
-                return BadRequest ("Hubo Un Error Vuelva Intentar");
+                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+            }
+        }
+
+        [HttpPut ("{Semestre}")]
+        public async Task<IActionResult> Put (int Semestre, [FromBody] Semestre value, string UserId) {
+            try {
+                if (!ModelState.IsValid) {
+                    return BadRequest (ModelState);
+                } else {
+                    if (await ExisteAsync (semestre: value, UserId: UserId)) {
+                        Estudiante es = await _estudiante.Get (UserId);
+                        es.Semestres[Semestre - 1] = value;
+                        var h = await _estudiante.Update (UserId, es);
+                        if (h.MatchedCount > 0) {
+                            return Ok ("Modificado");
+                        } else {
+                            return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                        }
+                    } else {
+                        return BadRequest ("Ya existe ese semestre");
+                    }
+                }
+            } catch (Exception) {
+                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+            }
+        }
+
+        [HttpDelete ("{Semestre}")]
+        public async Task<IActionResult> Delete (int Semestre, string UserId) {
+            try {
+                Estudiante es = await _estudiante.Get (UserId);
+                foreach (Semestre us in es.Semestres) {
+                    if (Semestre == us.Semetre) {
+                        es.Semestres.RemoveAt (Semestre - 1);
+                        var h = await _estudiante.Update (UserId, es);
+                        if (h.MatchedCount > 0) {
+                            return Ok ("Eliminado");
+                        } else {
+                            return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                        }
+                    }
+                }
+                return BadRequest ("Semestre no encontrado");
+            } catch (Exception) {
+                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
             }
         }
         private async Task<bool> ExisteAsync (Semestre semestre, string UserId) {
@@ -84,7 +133,7 @@ namespace OrganizerU.Controllers {
                 }
                 Estudiante es = await _estudiante.Get (UserId);
                 foreach (Semestre us in es.Semestres) {
-                    if (us.Semetre == semestre.Num_Cortes) return false;
+                    if (us.Semetre == semestre.Semetre) return false;
                 }
                 return true;
             } catch (Exception) {

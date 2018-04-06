@@ -33,7 +33,7 @@ namespace OrganizerU.Models {
     public int Creditos { get; set; }
 
     [Required]
-    public List<double> Cortes { get; set; }
+    public List<List<double>> Cortes_Notas { get; set; }
 
     public List<Stream> Archivos { get; set; }
     public Materia (DateTime horaInicio, DateTime horaFin, string nombre, string profesor, string salon, int creditos) {
@@ -43,7 +43,7 @@ namespace OrganizerU.Models {
       this.Profesor = profesor;
       this.Salon = salon;
       this.Creditos = creditos;
-      this.Cortes = new List<double> ();
+      this.Cortes_Notas = new List<List<double>>();
       this.Archivos = new List<Stream> ();
     }
   }

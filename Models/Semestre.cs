@@ -4,23 +4,43 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace OrganizerU.Models {
-    public class Semestre {
-        [BsonId]
-        [BsonRepresentation (BsonType.ObjectId)]
-        public string Id { get; set; }
-
+    public class Semestre : IValidatableObject {
         [Required]
-        List<Materia> Materias { get; set; }
+        public List<Materia> Materias { get; set; }
 
         [Required]
         public int Semetre { get; set; }
 
         [Required]
         public int Num_Cortes { get; set; }
-        public Semestre (int semetre, int num_Cortes) {
+
+        [Required]
+        public int[] Porcentajes_Cortes { get; set; }
+        public Semestre (string Id, int semetre, int num_Cortes, int[] Porcentajes_Cortes) {
             this.Semetre = semetre;
             this.Num_Cortes = num_Cortes;
+            this.Porcentajes_Cortes = Porcentajes_Cortes;
             this.Materias = new List<Materia> ();
+        }
+        public IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
+            var Err = new List<ValidationResult> ();
+            int total = 0;
+            if (Semetre <= 0) {
+                Err.Add (new ValidationResult ("El Semestre Tiene Que Ser Mayor A 0", new string[]{"1"}));
+            }
+            if (Num_Cortes <= 0) {
+                Err.Add (new ValidationResult ("El Numero de cortes Tiene Que Ser Mayor A 0", new string[]{"2"}));
+            }
+            if (Porcentajes_Cortes.Length != Num_Cortes) {
+                Err.Add (new ValidationResult ("El Tamaño Del Vector Tiene Que Ser Igual Al Numero De Cortes", new string[]{"3"}));
+            }
+            foreach(int i in Porcentajes_Cortes){
+                total += i;
+            }
+            if(total != 100){
+                Err.Add (new ValidationResult ("La Sumatoria Del Vector Tiene Que Ser Igual A 100", new string[]{"4"}));
+            }
+            return Err;
         }
     }
 }
