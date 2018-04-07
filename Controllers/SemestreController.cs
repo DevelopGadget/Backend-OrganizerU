@@ -88,16 +88,21 @@ namespace OrganizerU.Controllers {
                     return BadRequest (ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
-                    foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == Semestre) return BadRequest ("Ya existe ese semestre");;
+                    for (int i = 0; i  < es.Semestres.Count; i++ )  {
+                        if (es.Semestres[i].Semetre == Semestre) {
+                            foreach(Semestre us in es.Semestres){
+                                if(us.Semetre == value.Semetre) return BadRequest ("Ya Existe Ese Semestre");
+                            }
+                            es.Semestres[i] = value;
+                            var h = await _estudiante.Update (UserId, es);
+                            if (h.MatchedCount > 0) {
+                                return Ok ("Modificado");
+                            } else {
+                                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                            }
+                        }
                     }
-                    es.Semestres[Semestre - 1] = value;
-                    var h = await _estudiante.Update (UserId, es);
-                    if (h.MatchedCount > 0) {
-                        return Ok ("Modificado");
-                    } else {
-                        return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
-                    }
+                    return BadRequest ("No Existe Ese Semestre");
                 }
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
@@ -110,7 +115,7 @@ namespace OrganizerU.Controllers {
                 Estudiante es = await _estudiante.Get (UserId);
                 foreach (Semestre us in es.Semestres) {
                     if (Semestre == us.Semetre) {
-                        es.Semestres.RemoveAt (Semestre - 1);
+                        es.Semestres.Remove (us);
                         var h = await _estudiante.Update (UserId, es);
                         if (h.MatchedCount > 0) {
                             return Ok ("Eliminado");

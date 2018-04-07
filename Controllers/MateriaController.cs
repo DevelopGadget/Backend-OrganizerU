@@ -84,7 +84,15 @@ namespace OrganizerU.Controllers {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
-                            es.Semestres[Semestre - 1].Materias.Add (materia);
+                            materia.Cortes_Notas = new List<double>[us.Num_Cortes];
+                            for (int i = 0; i < us.Num_Cortes; i++) {
+                                materia.Cortes_Notas[i] = new List<double> ();
+                            }
+                            for (int i = 0; i < materia.Horario.Length; i++) {
+                                materia.Horario[i].HoraInicio = Convert.ToDateTime (materia.Horario[i].HoraInicio);
+                                materia.Horario[i].HoraFin = Convert.ToDateTime (materia.Horario[i].HoraFin);
+                            }
+                            us.Materias.Add (materia);
                             var h = await _estudiante.Update (UserId, es);
                             if (h.MatchedCount > 0) {
                                 return Ok ("Creado");
@@ -95,12 +103,12 @@ namespace OrganizerU.Controllers {
                     }
                     return BadRequest ("No Existe Este Semestre");
                 }
-            } catch (Exception) {
-                return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
+            } catch (Exception e) {
+                return BadRequest (e);
             }
         }
 
-        [HttpPost ("{Semestre}/{Id}")]
+        [HttpPut ("{Semestre}/{Id}")]
         public async Task<IActionResult> MateriasPut ([FromBody] Materia materia, string UserId, int Semestre, string Id) {
             try {
                 if (!ModelState.IsValid) {
@@ -109,9 +117,16 @@ namespace OrganizerU.Controllers {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
-                            for (int i = 0; i < es.Semestres[Semestre - 1].Materias.Count; i++) {
-                                if (es.Semestres[Semestre - 1].Materias[i].Id == Id) {
-                                    es.Semestres[Semestre - 1].Materias[i] = materia;
+                            for (int i = 0; i < us.Materias.Count; i++) {
+                                if (us.Materias[i].Id == Id) {
+                                    for (int j = 0; j < materia.Horario.Length; j++) {
+                                        materia.Horario[j].HoraInicio = Convert.ToDateTime (materia.Horario[i].HoraInicio);
+                                        materia.Horario[j].HoraFin = Convert.ToDateTime (materia.Horario[i].HoraFin);
+                                    }
+                                    materia.Id = us.Materias[i].Id;
+                                    materia.Cortes_Notas = us.Materias[i].Cortes_Notas;
+                                    materia.Archivos = us.Materias[i].Archivos;
+                                    us.Materias[i] = materia;
                                     var h = await _estudiante.Update (UserId, es);
                                     if (h.MatchedCount > 0) {
                                         return Ok ("Modificado");
@@ -125,8 +140,8 @@ namespace OrganizerU.Controllers {
                     }
                     return BadRequest ("No Existe Ese Semestre");
                 }
-            } catch (Exception) {
-                return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
+            } catch (Exception e) {
+                return BadRequest (e);
             }
         }
 
@@ -138,12 +153,15 @@ namespace OrganizerU.Controllers {
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == Semestre) {
-                            var h = await _estudiante.Remove (Id);
-                            if (h.DeletedCount > 0) {
-                                return Ok ("Eliminado");
-                            } else {
-                                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                        foreach (Materia mat in us.Materias) {
+                            if (us.Semetre == Semestre && mat.Id == Id) {
+                                us.Materias.Remove(mat);
+                                var h = await _estudiante.Update(UserId, es);
+                                if (h.MatchedCount > 0) {
+                                    return Ok ("Eliminado");
+                                } else {
+                                    return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                                }
                             }
                         }
                     }
