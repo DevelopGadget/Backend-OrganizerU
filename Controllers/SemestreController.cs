@@ -64,17 +64,16 @@ namespace OrganizerU.Controllers {
                 if (!ModelState.IsValid) {
                     return BadRequest (ModelState);
                 } else {
-                    if (await ExisteAsync (semestre: semestre, UserId: UserId)) {
-                        Estudiante es = await _estudiante.Get (UserId);
-                        es.Semestres.Add (semestre);
-                        var h = await _estudiante.Update (UserId, es);
-                        if (h.MatchedCount > 0) {
-                            return Ok ("Creado");
-                        } else {
-                            return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
-                        }
+                    Estudiante es = await _estudiante.Get (UserId);
+                    foreach (Semestre us in es.Semestres) {
+                        if (us.Semetre == semestre.Semetre) return BadRequest ("Ya existe ese semestre");;
+                    }
+                    es.Semestres.Add (semestre);
+                    var h = await _estudiante.Update (UserId, es);
+                    if (h.MatchedCount > 0) {
+                        return Ok ("Creado");
                     } else {
-                        return BadRequest ("Ya existe ese semestre");
+                        return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
                     }
                 }
             } catch (Exception) {
@@ -88,17 +87,16 @@ namespace OrganizerU.Controllers {
                 if (!ModelState.IsValid) {
                     return BadRequest (ModelState);
                 } else {
-                    if (await ExisteAsync (semestre: value, UserId: UserId)) {
-                        Estudiante es = await _estudiante.Get (UserId);
-                        es.Semestres[Semestre - 1] = value;
-                        var h = await _estudiante.Update (UserId, es);
-                        if (h.MatchedCount > 0) {
-                            return Ok ("Modificado");
-                        } else {
-                            return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
-                        }
+                    Estudiante es = await _estudiante.Get (UserId);
+                    foreach (Semestre us in es.Semestres) {
+                        if (us.Semetre == Semestre) return BadRequest ("Ya existe ese semestre");;
+                    }
+                    es.Semestres[Semestre - 1] = value;
+                    var h = await _estudiante.Update (UserId, es);
+                    if (h.MatchedCount > 0) {
+                        return Ok ("Modificado");
                     } else {
-                        return BadRequest ("Ya existe ese semestre");
+                        return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
                     }
                 }
             } catch (Exception) {
@@ -125,21 +123,6 @@ namespace OrganizerU.Controllers {
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
             }
-        }
-        private async Task<bool> ExisteAsync (Semestre semestre, string UserId) {
-            try {
-                if (semestre == null) {
-                    return false;
-                }
-                Estudiante es = await _estudiante.Get (UserId);
-                foreach (Semestre us in es.Semestres) {
-                    if (us.Semetre == semestre.Semetre) return false;
-                }
-                return true;
-            } catch (Exception) {
-                return false;
-            }
-
         }
     }
 }

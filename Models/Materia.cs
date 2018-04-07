@@ -35,6 +35,7 @@ namespace OrganizerU.Models {
     [Required]
     public List<List<double>> Cortes_Notas { get; set; }
 
+    [Required] 
     public List<Stream> Archivos { get; set; }
     public Materia (DateTime horaInicio, DateTime horaFin, string nombre, string profesor, string salon, int creditos) {
       this.HoraInicio = horaInicio;
@@ -43,7 +44,7 @@ namespace OrganizerU.Models {
       this.Profesor = profesor;
       this.Salon = salon;
       this.Creditos = creditos;
-      this.Cortes_Notas = new List<List<double>>();
+      this.Cortes_Notas = new List<List<double>> ();
       this.Archivos = new List<Stream> ();
     }
   }
