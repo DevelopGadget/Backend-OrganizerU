@@ -12,13 +12,7 @@ namespace OrganizerU.Models {
     public string Id { get; set; }
 
     [Required]
-    public DateTime HoraInicio { get; set; }
-
-    [Required]
-    public DateTime HoraFin { get; set; }
-
-    [Required]
-    public string[] Horario { get; set; }
+    public Dia[] Horario { get; set; }
 
     [Required]
     public string Nombre { get; set; }
@@ -33,18 +27,17 @@ namespace OrganizerU.Models {
     public int Creditos { get; set; }
 
     [Required]
-    public List<List<double>> Cortes_Notas { get; set; }
+    public List<double>[] Cortes_Notas { get; set; }
 
     [Required] 
     public List<Stream> Archivos { get; set; }
-    public Materia (DateTime horaInicio, DateTime horaFin, string nombre, string profesor, string salon, int creditos) {
-      this.HoraInicio = horaInicio;
-      this.HoraFin = horaFin;
+    public Materia (string nombre, string profesor, string salon, int creditos, Dia[] Horario, int cortes) {
       this.Nombre = nombre;
       this.Profesor = profesor;
       this.Salon = salon;
       this.Creditos = creditos;
-      this.Cortes_Notas = new List<List<double>> ();
+      this.Horario = Horario; 
+      this.Cortes_Notas = new List<double>[cortes];
       this.Archivos = new List<Stream> ();
     }
   }
