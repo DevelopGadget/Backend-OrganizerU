@@ -35,10 +35,11 @@ namespace OrganizerU.Controllers {
         if (id.Length < 24) {
           return BadRequest ("No Hay Documentos");
         }
-        if (await _user.Get (id) == null) {
+        Users us = await _user.Get (id);
+        if (us == null) {
           return BadRequest ("No Hay Documentos");
         }
-        return Ok (JsonConvert.SerializeObject (await _user.Get (id)));
+        return Ok (JsonConvert.SerializeObject (us));
       } catch (Exception) {
         return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
       }

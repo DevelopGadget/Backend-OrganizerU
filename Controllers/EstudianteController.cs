@@ -23,10 +23,11 @@ namespace OrganizerU.Controllers {
                 if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
                     return BadRequest ("Id Invalid");
                 }
-                if (await _estudiante.Get (UserId) == null) {
+                Estudiante  es  =await _estudiante.Get (UserId);
+                if (es == null) {
                     return BadRequest ("No Hay Documentos");
                 } else {
-                    return Ok (JsonConvert.SerializeObject (await _estudiante.Get (UserId)));
+                    return Ok (JsonConvert.SerializeObject (es));
                 }
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");

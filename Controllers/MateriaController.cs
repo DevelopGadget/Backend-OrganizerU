@@ -13,15 +13,15 @@ namespace OrganizerU.Controllers {
     public class MateriaController : Controller {
         private readonly IEstudiante _estudiante;
         public MateriaController (IEstudiante _estudiante) => this._estudiante = _estudiante;
-        
+
         [HttpGet]
         public Task<IActionResult> Get (string UserId) => GET (UserId);
         private async Task<IActionResult> GET (string UserId) {
             try {
-                if (await _estudiante.Get () == null) {
+                Estudiante es = await _estudiante.Get (UserId);
+                if (es == null) {
                     return BadRequest ("No Hay Documentos");
                 } else {
-                    Estudiante es = await _estudiante.Get (UserId);
                     List<List<Materia>> Mat = new List<List<Materia>> ();
                     foreach (Semestre sem in es.Semestres) {
                         Mat.Add (sem.Materias);
@@ -38,14 +38,14 @@ namespace OrganizerU.Controllers {
         public Task<IActionResult> GetSem (string UserId, int Semestre) => GETSEM (UserId, Semestre);
         private async Task<IActionResult> GETSEM (string UserId, int Semestre) {
             try {
-                if (await _estudiante.Get () == null) {
+                Estudiante es = await _estudiante.Get (UserId);
+                if (es == null) {
                     return BadRequest ("No Hay Documentos");
                 } else {
-                    Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) return BadRequest ("No Existe Ese Semestre");;
                     }
-                     return Ok (JsonConvert.SerializeObject (es.Semestres[Semestre - 1].Materias));
+                    return Ok (JsonConvert.SerializeObject (es.Semestres[Semestre - 1].Materias));
                 }
             } catch (Exception) {
                 return BadRequest ("Hubo Un Error Vuelva Intentar");
@@ -57,10 +57,10 @@ namespace OrganizerU.Controllers {
         public Task<IActionResult> Get (string UserId, string Id) => GET (UserId, Id);
         private async Task<IActionResult> GET (string UserId, string Id) {
             try {
-                if (await _estudiante.Get () == null) {
+                Estudiante es = await _estudiante.Get (UserId);
+                if (es == null) {
                     return BadRequest ("No Hay Documentos");
                 } else {
-                    Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre sem in es.Semestres) {
                         foreach (Materia Mat in sem.Materias) {
                             if (Mat.Id == Id) return Ok (JsonConvert.SerializeObject (Mat));
@@ -71,6 +71,79 @@ namespace OrganizerU.Controllers {
                 return BadRequest ("Hubo Un Error Vuelva Intentar");
             }
             return BadRequest ("No Hay Documentos");
+        }
+
+        [HttpPost ("{Semestre}")]
+        public async Task<IActionResult> MateriasPost ([FromBody] Materia materia, string UserId, int Semestre) {
+            try {
+                if (!ModelState.IsValid) {
+                    return BadRequest (ModelState);
+                } else {
+                    Estudiante es = await _estudiante.Get (UserId);
+                    foreach (Semestre us in es.Semestres) {
+                        if (us.Semetre == Semestre) return BadRequest ("No Existe Ese Semestre");;
+                    }
+                    es.Semestres[Semestre - 1].Materias.Add (materia);
+                    var h = await _estudiante.Update (UserId, es);
+                    if (h.MatchedCount > 0) {
+                        return Ok ("Creado");
+                    } else {
+                        return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                    }
+                }
+            } catch (Exception) {
+                return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
+            }
+        }
+
+        [HttpPost ("{Semestre}/{Id}")]
+        public async Task<IActionResult> MateriasPut ([FromBody] Materia materia, string UserId, int Semestre, string Id) {
+            try {
+                if (!ModelState.IsValid) {
+                    return BadRequest (ModelState);
+                } else {
+                    Estudiante es = await _estudiante.Get (UserId);
+                    foreach (Semestre us in es.Semestres) {
+                        if (us.Semetre == Semestre) return BadRequest ("No Existe Ese Semestre");;
+                    }
+                    for (int i = 0; i < es.Semestres[Semestre - 1].Materias.Count; i++) {
+                        if (es.Semestres[Semestre - 1].Materias[i].Id == Id) {
+                            es.Semestres[Semestre - 1].Materias[i] = materia;
+                            var h = await _estudiante.Update (UserId, es);
+                            if (h.MatchedCount > 0) {
+                                return Ok ("Modificado");
+                            } else {
+                                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                            }
+                        }
+                    }
+                    return BadRequest ("Materia no encontrada");
+                }
+            } catch (Exception) {
+                return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
+            }
+        }
+
+        [HttpDelete ("{Semestre}/{Id}")]
+        public async Task<IActionResult> MateriasDelete (string UserId, int Semestre, string Id) {
+            try {
+                if (!ModelState.IsValid) {
+                    return BadRequest (ModelState);
+                } else {
+                    Estudiante es = await _estudiante.Get (UserId);
+                    foreach (Semestre us in es.Semestres) {
+                        if (us.Semetre == Semestre) return BadRequest ("No Existe Ese Semestre");;
+                    }
+                    var h = await _estudiante.Remove (Id);
+                    if (h.DeletedCount > 0) {
+                        return Ok ("Eliminado");
+                    } else {
+                        return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+                    }
+                }
+            } catch (Exception) {
+                return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
+            }
         }
     }
 }

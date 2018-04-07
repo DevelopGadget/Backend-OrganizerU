@@ -18,10 +18,10 @@ namespace OrganizerU.Controllers {
         public Task<IActionResult> Get (string UserId) => GET (UserId);
         private async Task<IActionResult> GET (string UserId) {
             try {
-                if (await _estudiante.Get () == null) {
+                Estudiante es = await _estudiante.Get (UserId);
+                if (es == null) {
                     return BadRequest ("No Hay Documentos");
                 } else {
-                    Estudiante es = await _estudiante.Get (UserId);
                     if (es.Semestres == null) {
                         return BadRequest ("No Hay Documentos");
                     } else {
@@ -38,10 +38,10 @@ namespace OrganizerU.Controllers {
         public Task<IActionResult> Get (string UserId, int Semestre) => GET (UserId, Semestre);
         private async Task<IActionResult> GET (string UserId, int Semestre) {
             try {
-                if (await _estudiante.Get () == null) {
+                Estudiante es = await _estudiante.Get (UserId);
+                if (es == null) {
                     return BadRequest ("No Hay Documentos");
                 } else {
-                    Estudiante es = await _estudiante.Get (UserId);
                     Semestre sem = null;
                     foreach (Semestre ex in es.Semestres) {
                         if (ex.Semetre == Semestre) sem = ex;
