@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OrganizerU.Interfaces;
@@ -20,7 +21,7 @@ namespace OrganizerU.Controllers {
             try {
                 Estudiante es = await _estudiante.Get (UserId);
                 if (es == null) {
-                    return BadRequest ("No Hay Documentos");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     List<List<Materia>> Mat = new List<List<Materia>> ();
                     foreach (Semestre sem in es.Semestres) {
@@ -31,7 +32,6 @@ namespace OrganizerU.Controllers {
             } catch (Exception) {
                 return BadRequest ("Hubo Un Error Vuelva Intentar");
             }
-            return BadRequest ("No Hay Documentos");
         }
 
         [HttpGet ("Semestre/{Sem}")]
@@ -40,19 +40,18 @@ namespace OrganizerU.Controllers {
             try {
                 Estudiante es = await _estudiante.Get (UserId);
                 if (es == null) {
-                    return BadRequest ("No Hay Documentos");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Sem) {
                             return Ok (JsonConvert.SerializeObject (us.Materias));
                         }
                     }
-                    return BadRequest ("No Existe Ese Semestre");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Existe Ese Semestre");
                 }
             } catch (Exception e) {
                 return BadRequest (e);
             }
-            return BadRequest ("No Hay Documentos");
         }
 
         [HttpGet ("Id/{Id}")]
@@ -61,7 +60,7 @@ namespace OrganizerU.Controllers {
             try {
                 Estudiante es = await _estudiante.Get (UserId);
                 if (es == null) {
-                    return BadRequest ("No Hay Documentos");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     foreach (Semestre sem in es.Semestres) {
                         foreach (Materia Mat in sem.Materias) {
@@ -72,14 +71,14 @@ namespace OrganizerU.Controllers {
             } catch (Exception) {
                 return BadRequest ("Hubo Un Error Vuelva Intentar");
             }
-            return BadRequest ("No Hay Documentos");
+            return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
         }
 
         [HttpPost ("{Semestre}")]
         public async Task<IActionResult> MateriasPost ([FromBody] Materia materia, string UserId, int Semestre) {
             try {
                 if (!ModelState.IsValid) {
-                    return BadRequest (ModelState);
+                    return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
@@ -101,10 +100,10 @@ namespace OrganizerU.Controllers {
                             }
                         }
                     }
-                    return BadRequest ("No Existe Este Semestre");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Existe Este Semestre");
                 }
-            } catch (Exception e) {
-                return BadRequest (e);
+            } catch (Exception) {
+                return BadRequest ("Ah Ocurrido Un Error Vuelva A Intentar");
             }
         }
 
@@ -112,7 +111,7 @@ namespace OrganizerU.Controllers {
         public async Task<IActionResult> MateriasPut ([FromBody] Materia materia, string UserId, int Semestre, string Id) {
             try {
                 if (!ModelState.IsValid) {
-                    return BadRequest (ModelState);
+                    return  StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
@@ -135,13 +134,13 @@ namespace OrganizerU.Controllers {
                                     }
                                 }
                             }
-                            return BadRequest ("Materia no encontrada");
+                            return StatusCode (StatusCodes.Status406NotAcceptable,"Materia no encontrada");
                         }
                     }
-                    return BadRequest ("No Existe Ese Semestre");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Existe Ese Semestre");
                 }
-            } catch (Exception e) {
-                return BadRequest (e);
+            } catch (Exception) {
+                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
             }
         }
 
@@ -149,7 +148,7 @@ namespace OrganizerU.Controllers {
         public async Task<IActionResult> MateriasDelete (string UserId, int Semestre, string Id) {
             try {
                 if (!ModelState.IsValid) {
-                    return BadRequest (ModelState);
+                    return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
@@ -165,7 +164,7 @@ namespace OrganizerU.Controllers {
                             }
                         }
                     }
-                    return BadRequest ("No Existe Ese Semestre");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Existe Ese Semestre");
                 }
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");

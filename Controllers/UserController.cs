@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -33,11 +34,11 @@ namespace OrganizerU.Controllers {
     private async Task<IActionResult> GetUser (string id) {
       try {
         if (id.Length < 24) {
-          return BadRequest ("No Hay Documentos");
+          return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
         }
         Users us = await _user.Get (id);
         if (us == null) {
-          return BadRequest ("No Hay Documentos");
+          return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
         }
         return Ok (JsonConvert.SerializeObject (us));
       } catch (Exception) {
@@ -57,7 +58,7 @@ namespace OrganizerU.Controllers {
             await _estudiante.Add (new Estudiante (IdGet (user).Result));
             return Ok ("Creado");
           } else {
-            return BadRequest ("Ya existe esa cuenta");
+            return StatusCode (StatusCodes.Status406NotAcceptable,"Ya existe esa cuenta");
           }
         }
       } catch (Exception) {
@@ -70,7 +71,7 @@ namespace OrganizerU.Controllers {
     public async Task<IActionResult> Login ([FromBody] Users user) {
       try {
         if (!ModelState.IsValid) {
-          return BadRequest (ModelState);
+          return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
         } else {
           if (await Authenticate (user)) {
             return BuildToken (await _estudiante.Get (IdGet (user).Result), user);
@@ -88,10 +89,10 @@ namespace OrganizerU.Controllers {
     public async Task<IActionResult> Put (string id, [FromBody] Users user) {
       try {
         if (string.IsNullOrEmpty (id) || id.Length < 24) {
-          return BadRequest ("Id Invalid");
+          return StatusCode (StatusCodes.Status406NotAcceptable,"Id Invalid");
         }
         if (await _user.Get (id) == null) {
-          return BadRequest ("No ha coincidencias");
+          return StatusCode (StatusCodes.Status406NotAcceptable,"No ha coincidencias");
         }
         if (ModelState.IsValid) {
           user.Id = id;
@@ -102,7 +103,7 @@ namespace OrganizerU.Controllers {
             return BadRequest ("Hubo un error");
           }
         } else {
-          return BadRequest (ModelState);
+          return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
         }
       } catch (Exception) {
         return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
@@ -114,10 +115,10 @@ namespace OrganizerU.Controllers {
     public async Task<IActionResult> Delete (string id) {
       try {
         if (string.IsNullOrEmpty (id) || id.Length < 24) {
-          return BadRequest ("Id invalid");
+          return StatusCode (StatusCodes.Status406NotAcceptable,"Id invalid");
         }
         if (await _user.Get (id) == null) {
-          return BadRequest ("Invalid Id");
+          return StatusCode (StatusCodes.Status406NotAcceptable,"Invalid Id");
         }
         var h = await _user.Remove (id);
         var e = await _estudiante.Remove (id);

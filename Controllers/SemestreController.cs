@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OrganizerU.Interfaces;
@@ -20,10 +21,10 @@ namespace OrganizerU.Controllers {
             try {
                 Estudiante es = await _estudiante.Get (UserId);
                 if (es == null) {
-                    return BadRequest ("No Hay Documentos");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     if (es.Semestres == null) {
-                        return BadRequest ("No Hay Documentos");
+                        return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                     } else {
                         return Ok (JsonConvert.SerializeObject (es.Semestres));
                     }
@@ -31,7 +32,6 @@ namespace OrganizerU.Controllers {
             } catch (Exception) {
                 return BadRequest ("Hubo Un Error Vuelva Intentar");
             }
-            return BadRequest ("No Hay Documentos");
         }
 
         [HttpGet ("{Semestre}")]
@@ -40,14 +40,14 @@ namespace OrganizerU.Controllers {
             try {
                 Estudiante es = await _estudiante.Get (UserId);
                 if (es == null) {
-                    return BadRequest ("No Hay Documentos");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     Semestre sem = null;
                     foreach (Semestre ex in es.Semestres) {
                         if (ex.Semetre == Semestre) sem = ex;
                     }
                     if (sem == null) {
-                        return BadRequest ("No Hay Documentos");
+                        return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                     } else {
                         return Ok (JsonConvert.SerializeObject (sem));
                     }
@@ -55,18 +55,17 @@ namespace OrganizerU.Controllers {
             } catch (Exception) {
                 return BadRequest ("Hubo Un Error Vuelva Intentar");
             }
-            return BadRequest ("No Hay Documentos");
         }
 
         [HttpPost]
         public async Task<IActionResult> Post ([FromBody] Semestre semestre, string UserId) {
             try {
                 if (!ModelState.IsValid) {
-                    return BadRequest (ModelState);
+                    return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
                     foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == semestre.Semetre) return BadRequest ("Ya existe ese semestre");;
+                        if (us.Semetre == semestre.Semetre) return StatusCode (StatusCodes.Status406NotAcceptable,"Ya existe ese semestre");
                     }
                     es.Semestres.Add (semestre);
                     var h = await _estudiante.Update (UserId, es);
@@ -85,7 +84,7 @@ namespace OrganizerU.Controllers {
         public async Task<IActionResult> Put (int Semestre, [FromBody] Semestre value, string UserId) {
             try {
                 if (!ModelState.IsValid) {
-                    return BadRequest (ModelState);
+                    return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
                     for (int i = 0; i  < es.Semestres.Count; i++ )  {
@@ -102,7 +101,7 @@ namespace OrganizerU.Controllers {
                             }
                         }
                     }
-                    return BadRequest ("No Existe Ese Semestre");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Existe Ese Semestre");
                 }
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
@@ -124,7 +123,7 @@ namespace OrganizerU.Controllers {
                         }
                     }
                 }
-                return BadRequest ("Semestre no encontrado");
+                return StatusCode (StatusCodes.Status406NotAcceptable,"Semestre no encontrado");
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
             }

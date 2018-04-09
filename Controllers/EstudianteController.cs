@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OrganizerU.Interfaces;
@@ -21,11 +22,11 @@ namespace OrganizerU.Controllers {
         private async Task<IActionResult> GET (string UserId) {
             try {
                 if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
-                    return BadRequest ("Id Invalid");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"Id Invalid");
                 }
                 Estudiante  es  =await _estudiante.Get (UserId);
                 if (es == null) {
-                    return BadRequest ("No Hay Documentos");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     return Ok (JsonConvert.SerializeObject (es));
                 }
@@ -38,7 +39,7 @@ namespace OrganizerU.Controllers {
         public async Task<IActionResult> Put ([FromBody] Estudiante put, string UserId) {
             try {
                 if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
-                    return BadRequest ("Id Invalid");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"Id Invalid");
                 }
                 if (ModelState.IsValid) {
                     put.Id = UserId;
@@ -49,7 +50,7 @@ namespace OrganizerU.Controllers {
                         return BadRequest ("Hubo un error");
                     }
                 } else {
-                    return BadRequest (ModelState);
+                    return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 }
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
@@ -60,13 +61,13 @@ namespace OrganizerU.Controllers {
         public async Task<IActionResult> Delete (string UserId) {
             try {
                 if (string.IsNullOrEmpty (UserId) || UserId.Length < 24) {
-                    return BadRequest ("Id Invalid");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"Id Invalid");
                 }
                 var e = await _estudiante.Remove (UserId);
                 if (e.DeletedCount > 0) {
                     return Ok ("Eliminado");
                 } else {
-                    return BadRequest ("Hubo un error");
+                    return StatusCode (StatusCodes.Status406NotAcceptable,"Hubo un error");
                 }
             } catch (Exception) {
                 return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");

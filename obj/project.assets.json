@@ -13074,11 +13074,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\FernanPro18\\Desktop\\OrganizerU\\OrganizerU.csproj",
+      "projectUniqueName": "d:\\Proyectos Api\\OrganizerU\\OrganizerU.csproj",
       "projectName": "OrganizerU",
-      "projectPath": "C:\\Users\\FernanPro18\\Desktop\\OrganizerU\\OrganizerU.csproj",
+      "projectPath": "d:\\Proyectos Api\\OrganizerU\\OrganizerU.csproj",
       "packagesPath": "C:\\Users\\FernanPro18\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\FernanPro18\\Desktop\\OrganizerU\\obj\\",
+      "outputPath": "d:\\Proyectos Api\\OrganizerU\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
