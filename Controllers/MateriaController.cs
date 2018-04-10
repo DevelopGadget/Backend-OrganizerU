@@ -81,6 +81,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
                             materia.Cortes_Notas = new List<double>[us.Num_Cortes];
@@ -114,6 +115,7 @@ namespace OrganizerU.Controllers {
                     return  StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
                             for (int i = 0; i < us.Materias.Count; i++) {
@@ -151,6 +153,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         foreach (Materia mat in us.Materias) {
                             if (us.Semetre == Semestre && mat.Id == Id) {

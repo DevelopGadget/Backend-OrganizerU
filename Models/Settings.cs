@@ -6,7 +6,7 @@ namespace OrganizerU.Models
   {
     public string ConectionString { get; set; }
     public string Database { get; set; }
-    public IConfigurationRoot configuration { get; set; }
+    public IConfiguration configuration { get; set; }
   }
 
 }

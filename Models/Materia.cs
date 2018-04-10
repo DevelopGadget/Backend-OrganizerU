@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using MongoDB.Driver.GridFS;
 
 namespace OrganizerU.Models {
   public class Materia : IValidatableObject {
@@ -24,7 +25,7 @@ namespace OrganizerU.Models {
     public List<double>[] Cortes_Notas { get; set; }
 
     [Required]
-    public List<Stream> Archivos { get; set; }
+    public List<IGridFSBucket> Archivos { get; set; }
     public Materia (string nombre, string profesor, int creditos, Dia[] Horario) {
       this.Id = Guid.NewGuid().ToString();
       this.Nombre = nombre;
@@ -32,7 +33,7 @@ namespace OrganizerU.Models {
       this.Creditos = creditos;
       this.Horario = Horario;
       this.Cortes_Notas = new List<double>[0];
-      this.Archivos = new List<Stream> ();
+      this.Archivos = new List<IGridFSBucket> ();
     }
 
     public IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {

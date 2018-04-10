@@ -31,8 +31,8 @@ namespace OrganizerU.Controllers {
                     }
                     return StatusCode (StatusCodes.Status406NotAcceptable, "Materia No Encontrada");
                 }
-            } catch (Exception) {
-                return BadRequest ("Hubo Un Error Vuelva Intentar");
+            } catch (Exception e) {
+                return BadRequest (e);
             }
         }
 
@@ -56,8 +56,8 @@ namespace OrganizerU.Controllers {
                     }
                     return StatusCode (StatusCodes.Status406NotAcceptable, "Materia No Encontrada");
                 }
-            } catch (Exception) {
-                return BadRequest ("Hubo Un Error Vuelva Intentar");
+            } catch (Exception  e) {
+                return BadRequest (e);
             }
         }
 
@@ -69,6 +69,7 @@ namespace OrganizerU.Controllers {
                 } else {
                     if(nota < 0) return StatusCode (StatusCodes.Status406NotAcceptable, "Notas Mayor O Igual A 0");
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null)  return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
                             foreach (Materia mat in us.Materias) {
@@ -102,6 +103,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable, ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
                             foreach (Materia mat in us.Materias) {
@@ -140,6 +142,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable, ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == Semestre) {
                             foreach (Materia mat in us.Materias) {

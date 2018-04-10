@@ -2748,6 +2748,21 @@
           "lib/netstandard1.5/MongoDB.Driver.Core.dll": {}
         }
       },
+      "MongoDB.Driver.GridFS/2.5.0": {
+        "type": "package",
+        "dependencies": {
+          "MongoDB.Bson": "2.5.0",
+          "MongoDB.Driver": "2.5.0",
+          "MongoDB.Driver.Core": "2.5.0",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {}
+        }
+      },
       "NETStandard.Library/2.0.0": {
         "type": "package",
         "dependencies": {
@@ -7689,6 +7704,20 @@
         "lib/netstandard1.5/MongoDB.Driver.Core.xml",
         "mongodb.driver.core.2.5.0.nupkg.sha512",
         "mongodb.driver.core.nuspec"
+      ]
+    },
+    "MongoDB.Driver.GridFS/2.5.0": {
+      "sha512": "9vhOWf9f+OgpBdY3sObS4nX0VEhFwSm04z96609GYa/K94+P22FyekCZD/ZxYNV7PFD6S/fCMVa0uUbFdPAWoA==",
+      "type": "package",
+      "path": "mongodb.driver.gridfs/2.5.0",
+      "files": [
+        "License.rtf",
+        "lib/net45/MongoDB.Driver.GridFS.dll",
+        "lib/net45/MongoDB.Driver.GridFS.xml",
+        "lib/netstandard1.5/MongoDB.Driver.GridFS.dll",
+        "lib/netstandard1.5/MongoDB.Driver.GridFS.xml",
+        "mongodb.driver.gridfs.2.5.0.nupkg.sha512",
+        "mongodb.driver.gridfs.nuspec"
       ]
     },
     "NETStandard.Library/2.0.0": {
@@ -13063,7 +13092,8 @@
     ".NETCoreApp,Version=v2.0": [
       "Microsoft.AspNetCore.All >= 2.0.6",
       "Microsoft.NETCore.App >= 2.0.0",
-      "MongoDB.Driver >= 2.5.0"
+      "MongoDB.Driver >= 2.5.0",
+      "MongoDB.Driver.GridFS >= 2.5.0"
     ]
   },
   "packageFolders": {
@@ -13120,6 +13150,10 @@
             "autoReferenced": true
           },
           "MongoDB.Driver": {
+            "target": "Package",
+            "version": "[2.5.0, )"
+          },
+          "MongoDB.Driver.GridFS": {
             "target": "Package",
             "version": "[2.5.0, )"
           }

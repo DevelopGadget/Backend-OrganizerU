@@ -165,11 +165,11 @@ namespace OrganizerU.Controllers {
         new Claim ("Datos", JsonConvert.SerializeObject (estudiante)),
         new Claim (JwtRegisteredClaimNames.Jti, System.Guid.NewGuid ().ToString ())
       };
-      var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (_config["Jwt:Key"]));
+      var key = new SymmetricSecurityKey (Encoding.UTF8.GetBytes (_config["Key"]));
       var creds = new SigningCredentials (key, SecurityAlgorithms.HmacSha256);
       var expiration = System.DateTime.Now.AddMinutes (30);
-      JwtSecurityToken token = new JwtSecurityToken (_config["Jwt:Issuer"],
-        _config["Jwt:Issuer"],
+      JwtSecurityToken token = new JwtSecurityToken (_config["Issuer"],
+        _config["Issuer"],
         claims : claims,
         expires : expiration,
         signingCredentials : creds);

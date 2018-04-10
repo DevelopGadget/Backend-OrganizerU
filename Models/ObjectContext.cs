@@ -4,12 +4,12 @@ using MongoDB.Driver;
 
 namespace OrganizerU.Models {
   public class ObjectContext {
-    public IConfigurationRoot Configuration { get; set; }
+    public IConfiguration Configuration { get; set; }
     private IMongoDatabase _database = null;
     public ObjectContext (IOptions<Settings> Setting) {
       Configuration = Setting.Value.configuration;
-      Setting.Value.ConectionString = Configuration.GetSection ("MongoConection:ConectionMlab").Value;
-      Setting.Value.Database = Configuration.GetSection ("MongoConection:Database").Value;
+      Setting.Value.ConectionString = Configuration["ConectionMlab"].ToString();
+      Setting.Value.Database = Configuration["Database"].ToString();
       var Client = new MongoClient (Setting.Value.ConectionString);
       if (Client != null) { _database = Client.GetDatabase (Setting.Value.Database); }
     }

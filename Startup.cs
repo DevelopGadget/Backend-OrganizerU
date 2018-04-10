@@ -38,12 +38,12 @@ namespace OrganizerU
           ValidateAudience = true,
           ValidateLifetime = true,
           ValidateIssuerSigningKey = true,
-          ValidIssuer = Configuration["Jwt:Issuer"],
-          ValidAudience = Configuration["Jwt:Issuer"],
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+          ValidIssuer = Configuration["Issuer"].ToString(),
+          ValidAudience = Configuration["Issuer"].ToString(),
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Key"]))
         };
       });
-      services.Configure<Settings>(o => { o.configuration = (IConfigurationRoot)Configuration; });
+      services.Configure<Settings>(o => { o.configuration = Configuration; });
       services.AddTransient<IUser, User_Repositorio>();
       services.AddTransient<IEstudiante, Estudiante_Repositorio>();
       services.AddMvc();

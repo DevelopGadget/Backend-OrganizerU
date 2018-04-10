@@ -64,6 +64,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         if (us.Semetre == semestre.Semetre) return StatusCode (StatusCodes.Status406NotAcceptable,"Ya existe ese semestre");
                     }
@@ -75,8 +76,8 @@ namespace OrganizerU.Controllers {
                         return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
                     }
                 }
-            } catch (Exception) {
-                return BadRequest ("Ha Ocurrido Un Error Vuelva Intentar");
+            } catch (Exception e) {
+                return BadRequest (e);
             }
         }
 
@@ -87,6 +88,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable,ModelState);
                 } else {
                     Estudiante es = await _estudiante.Get (UserId);
+                    if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     for (int i = 0; i  < es.Semestres.Count; i++ )  {
                         if (es.Semestres[i].Semetre == Semestre) {
                             foreach(Semestre us in es.Semestres){
@@ -112,6 +114,7 @@ namespace OrganizerU.Controllers {
         public async Task<IActionResult> Delete (int Semestre, string UserId) {
             try {
                 Estudiante es = await _estudiante.Get (UserId);
+                if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                 foreach (Semestre us in es.Semestres) {
                     if (Semestre == us.Semetre) {
                         es.Semestres.Remove (us);
