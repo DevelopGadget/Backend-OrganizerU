@@ -9,3 +9,14 @@ C:\Users\FernanPro18\Desktop\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.Assem
 C:\Users\FernanPro18\Desktop\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.AssemblyInfo.cs
 C:\Users\FernanPro18\Desktop\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.dll
 C:\Users\FernanPro18\Desktop\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.pdb
+D:\Proyectos Api\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.csprojResolveAssemblyReference.cache
+D:\Proyectos Api\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.csproj.CoreCompileInputs.cache
+D:\Proyectos Api\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.AssemblyInfoInputs.cache
+D:\Proyectos Api\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.AssemblyInfo.cs
+D:\Proyectos Api\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.dll
+D:\Proyectos Api\OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.pdb
+D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.deps.json
+D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.runtimeconfig.json
+D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.runtimeconfig.dev.json
+D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.dll
+D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.pdb
