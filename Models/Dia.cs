@@ -10,11 +10,15 @@ namespace OrganizerU.Models {
         public DateTime HoraInicio { get; set; }
 
         [Required]
+        public string Salon { get; set; }
+
+        [Required]
         public DateTime HoraFin { get; set; }
-        public Dia (string nombre, DateTime horaInicio, DateTime horaFin) {
+        public Dia (string nombre, DateTime horaInicio, DateTime horaFin, string Salon) {
             this.Nombre_Dia = nombre;
             this.HoraInicio = horaInicio;
             this.HoraFin = horaFin;
+            this.Salon  =  Salon;
         }
     }
 }

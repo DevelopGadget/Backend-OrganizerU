@@ -18,9 +18,6 @@ namespace OrganizerU.Models {
     public string Profesor { get; set; }
 
     [Required]
-    public string Salon { get; set; }
-
-    [Required]
     public int Creditos { get; set; }
 
     [Required]
@@ -28,11 +25,10 @@ namespace OrganizerU.Models {
 
     [Required]
     public List<Stream> Archivos { get; set; }
-    public Materia (string nombre, string profesor, string salon, int creditos, Dia[] Horario) {
+    public Materia (string nombre, string profesor, int creditos, Dia[] Horario) {
       this.Id = Guid.NewGuid().ToString();
       this.Nombre = nombre;
       this.Profesor = profesor;
-      this.Salon = salon;
       this.Creditos = creditos;
       this.Horario = Horario;
       this.Cortes_Notas = new List<double>[0];
