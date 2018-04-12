@@ -18,7 +18,13 @@ namespace OrganizerU.Controllers
     {
 
         private readonly IEstudiante _estudiante;
-        public ArchivosController(IEstudiante _estudiante) => this._estudiante = _estudiante;
+        private readonly IArchivo _archivo;
+
+        public ArchivosController(IEstudiante _estudiante, IArchivo _archivo)
+        {
+            this._estudiante = _estudiante;
+            this._archivo = _archivo;
+        }
 
         [HttpGet]
         public Task<IActionResult> Get(string UserId) => GET(UserId);
@@ -106,7 +112,7 @@ namespace OrganizerU.Controllers
                                             {"Id Materia",  Id}
                                         }
                                     };
-                                    await _estudiante.Archivo(FilePost.FileName, FilePost.OpenReadStream(), options);
+                                    await _archivo.Add(FilePost.FileName, FilePost.OpenReadStream(), options);
                                     return Ok("Creado");
                                 }
                                 else

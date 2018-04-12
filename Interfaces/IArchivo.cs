@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OrganizerU.Interfaces
 {
-    interface IArchivo
+    public interface IArchivo
     {
         Task Add(string Filename, Stream stream, GridFSUploadOptions opt);
     }
