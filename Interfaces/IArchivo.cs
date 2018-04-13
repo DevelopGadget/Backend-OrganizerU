@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver.GridFS;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +11,8 @@ namespace OrganizerU.Interfaces
 {
     public interface IArchivo
     {
-        Task Add(string Filename, Stream stream, GridFSUploadOptions opt);
+        Task<GridFSFileInfo> Get(ObjectId Id);
+        Task<ObjectId> Add(string Filename, Stream stream, GridFSUploadOptions opt);
+        Task Delete(ObjectId Id);
     }
 }

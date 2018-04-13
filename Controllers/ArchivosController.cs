@@ -7,7 +7,9 @@ using Newtonsoft.Json;
 using OrganizerU.Interfaces;
 using OrganizerU.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace OrganizerU.Controllers
@@ -43,7 +45,12 @@ namespace OrganizerU.Controllers
                     {
                         foreach (Materia mat in us.Materias)
                         {
-                            return Ok(JsonConvert.SerializeObject(mat.Archivos));
+                            List<GridFSFileInfo> Ar = new List<GridFSFileInfo>();
+                            foreach(ObjectId Id in mat.Archivos)
+                            {
+                                Ar.Add(await _archivo.Get(Id));
+                            }
+                            return Ok(JsonConvert.SerializeObject(Ar));
                         }
                     }
                     return StatusCode(StatusCodes.Status406NotAcceptable, "No Existe Esa Materia");
@@ -73,7 +80,12 @@ namespace OrganizerU.Controllers
                         {
                             if (mat.Id.Equals(Id))
                             {
-                                return Ok(JsonConvert.SerializeObject(mat.Archivos));
+                                List<GridFSFileInfo> Ar = new List<GridFSFileInfo>();
+                                foreach (ObjectId Idm in mat.Archivos)
+                                {
+                                    Ar.Add(await _archivo.Get(Idm));
+                                }
+                                return Ok(JsonConvert.SerializeObject(Ar));
                             }
                         }
                     }
@@ -90,6 +102,7 @@ namespace OrganizerU.Controllers
         {
             try
             {
+                if (!ModelState.IsValid) return StatusCode(StatusCodes.Status406NotAcceptable, ModelState);
                 Estudiante es = await _estudiante.Get(UserId);
                 if (es == null || FilePost == null)
                 {
@@ -103,7 +116,7 @@ namespace OrganizerU.Controllers
                         {
                             if (mat.Id.Equals(Id))
                             {
-                                if (FilePost.Length > 0 && FilePost.Length < 2097152)
+                                if (FilePost.Length > 0 && FilePost.Length < (2000 * 1024))
                                 {
                                     var options = new GridFSUploadOptions
                                     {
@@ -112,8 +125,21 @@ namespace OrganizerU.Controllers
                                             {"Id Materia",  Id}
                                         }
                                     };
-                                    await _archivo.Add(FilePost.FileName, FilePost.OpenReadStream(), options);
-                                    return Ok("Creado");
+                                    var Idm  = await _archivo.Add(FilePost.FileName, FilePost.OpenReadStream(), options);
+                                    if (Idm == null)
+                                    {
+                                        return BadRequest("Ha Ocurrido Un Error Vuelva Intentar");
+                                    }
+                                    mat.Archivos.Add(Idm);
+                                    var h = await _estudiante.Update(UserId, es);
+                                    if (h.MatchedCount > 0)
+                                    {
+                                        return Ok("Creado");
+                                    }
+                                    else
+                                    {
+                                        return BadRequest("Ha Ocurrido Un Error Vuelva Intentar");
+                                    }
                                 }
                                 else
                                 {
@@ -128,6 +154,47 @@ namespace OrganizerU.Controllers
             catch (Exception e)
             {
                 return BadRequest(e);
+            }
+        }
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(string Id, string UserId)
+        {
+            try
+            {
+                if (Id.Length < 24)
+                {
+                    return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
+                }
+                Estudiante es = await _estudiante.Get(UserId);
+                if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
+                foreach (Semestre us in es.Semestres)
+                {
+                    foreach(Materia mat in us.Materias)
+                    {
+                        foreach (ObjectId Ids in mat.Archivos)
+                        {
+                            if(new ObjectId(Id) == Ids)
+                            {
+                                await _archivo.Delete(Ids);
+                                mat.Archivos.Remove(Ids);
+                                var h = await _estudiante.Update(UserId, es);
+                                if (h.MatchedCount > 0)
+                                {
+                                    return Ok("Eliminado");
+                                }
+                                else
+                                {
+                                    return BadRequest("Ha Ocurrido Un Error Vuelva Intentar");
+                                }
+                            }
+                        }
+                    }
+                }
+                return StatusCode(StatusCodes.Status406NotAcceptable, "Id no encontrado");
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ha Ocurrido Un Error Vuelva Intentar");
             }
         }
     }
