@@ -21,6 +21,8 @@ namespace OrganizerU.Repositorio
 
         public async Task Delete(ObjectId Id) => await context.Grid.DeleteAsync(Id);
 
-        public async Task<GridFSFileInfo> Get(ObjectId Id) => context.Grid.Find(Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, "fernando.docx")).ToList().FirstOrDefault();
+        public async Task<GridFSFileInfo> Get(ObjectId Id) => await  context.Grid.Find(Builders<GridFSFileInfo>.Filter.Eq<string>(info => info.Filename, "fernando.docx")).FirstOrDefaultAsync();
+
+        public async Task Rename(ObjectId Id, string FileName) => await context.Grid.RenameAsync(Id, FileName);
     }
 }

@@ -8,8 +8,6 @@ using OrganizerU.Interfaces;
 using OrganizerU.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace OrganizerU.Controllers
@@ -67,6 +65,7 @@ namespace OrganizerU.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(UserId) || UserId.Length < 24) return StatusCode(StatusCodes.Status406NotAcceptable, "Id Invalid");
                 Estudiante es = await _estudiante.Get(UserId);
                 if (es == null)
                 {
@@ -80,12 +79,7 @@ namespace OrganizerU.Controllers
                         {
                             if (mat.Id.Equals(Id))
                             {
-                                List<GridFSFileInfo> Ar = new List<GridFSFileInfo>();
-                                foreach (ObjectId Idm in mat.Archivos)
-                                {
-                                    Ar.Add(await _archivo.Get(Idm));
-                                }
-                                return Ok(JsonConvert.SerializeObject(Ar));
+                                return Ok(JsonConvert.SerializeObject(await _archivo.Get(new ObjectId(Id))));
                             }
                         }
                     }
@@ -102,6 +96,7 @@ namespace OrganizerU.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(UserId) || UserId.Length < 24) return StatusCode(StatusCodes.Status406NotAcceptable, "Id Invalid");
                 if (!ModelState.IsValid) return StatusCode(StatusCodes.Status406NotAcceptable, ModelState);
                 Estudiante es = await _estudiante.Get(UserId);
                 if (es == null || FilePost == null)
@@ -149,6 +144,42 @@ namespace OrganizerU.Controllers
                         }
                     }
                     return StatusCode(StatusCodes.Status406NotAcceptable, "No Existe Esa Materia");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> Put([FromBody] string FileName, string UserId, string Id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(UserId) || UserId.Length < 24) return StatusCode(StatusCodes.Status406NotAcceptable, "Id Invalid");
+                if (!ModelState.IsValid) return StatusCode(StatusCodes.Status406NotAcceptable, ModelState);
+                Estudiante es = await _estudiante.Get(UserId);
+                if (es == null)
+                {
+                    return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
+                }
+                else
+                {
+                    foreach (Semestre us in es.Semestres)
+                    {
+                        foreach (Materia mat in us.Materias)
+                        {
+                            foreach (ObjectId Ids in mat.Archivos)
+                            {
+                                if(Ids == new ObjectId(Id))
+                                {
+                                   await _archivo.Rename(Ids, FileName);
+                                    return Ok(JsonConvert.SerializeObject("Modificado"));
+                                }
+                            }
+                        }
+                    }
+                    return StatusCode(StatusCodes.Status406NotAcceptable, "No Existe Ese Archivo");
                 }
             }
             catch (Exception e)

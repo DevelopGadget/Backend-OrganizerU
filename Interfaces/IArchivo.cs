@@ -14,5 +14,6 @@ namespace OrganizerU.Interfaces
         Task<GridFSFileInfo> Get(ObjectId Id);
         Task<ObjectId> Add(string Filename, Stream stream, GridFSUploadOptions opt);
         Task Delete(ObjectId Id);
+        Task Rename(ObjectId Id, string FileName);
     }
 }
