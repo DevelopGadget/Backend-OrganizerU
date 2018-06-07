@@ -13104,11 +13104,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Proyectos Api\\OrganizerU\\OrganizerU.csproj",
+      "projectUniqueName": "C:\\Users\\FernanPro18\\Desktop\\Backend-OrganizerU\\OrganizerU.csproj",
       "projectName": "OrganizerU",
-      "projectPath": "D:\\Proyectos Api\\OrganizerU\\OrganizerU.csproj",
+      "projectPath": "C:\\Users\\FernanPro18\\Desktop\\Backend-OrganizerU\\OrganizerU.csproj",
       "packagesPath": "C:\\Users\\FernanPro18\\.nuget\\packages\\",
-      "outputPath": "D:\\Proyectos Api\\OrganizerU\\obj\\",
+      "outputPath": "C:\\Users\\FernanPro18\\Desktop\\Backend-OrganizerU\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",

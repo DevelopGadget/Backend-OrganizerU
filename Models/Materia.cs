@@ -24,7 +24,7 @@ namespace OrganizerU.Models {
     public List<double>[] Cortes_Notas { get; set; }
 
     [Required]
-    public List<ObjectId> Archivos { get; set; }
+    public List<string> Archivos { get; set; }
 
     public Materia (string nombre, string profesor, int creditos, Dia[] Horario) {
       this.Id = Guid.NewGuid().ToString();
@@ -33,7 +33,7 @@ namespace OrganizerU.Models {
       this.Creditos = creditos;
       this.Horario = Horario;
       this.Cortes_Notas = new List<double>[0];
-      this.Archivos = new List<ObjectId> ();
+      this.Archivos = new List<string> ();
     }
 
     public IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {

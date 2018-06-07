@@ -20,3 +20,14 @@ D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.runtimeconfig.jso
 D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.runtimeconfig.dev.json
 D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.dll
 D:\Proyectos Api\OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.pdb
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.deps.json
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.runtimeconfig.json
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.runtimeconfig.dev.json
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.dll
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\bin\Debug\netcoreapp2.0\OrganizerU.pdb
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.csprojResolveAssemblyReference.cache
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.csproj.CoreCompileInputs.cache
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.AssemblyInfoInputs.cache
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.AssemblyInfo.cs
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.dll
+C:\Users\FernanPro18\Desktop\Backend-OrganizerU\obj\Debug\netcoreapp2.0\OrganizerU.pdb

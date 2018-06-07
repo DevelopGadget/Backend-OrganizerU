@@ -11,9 +11,9 @@ namespace OrganizerU.Interfaces
 {
     public interface IArchivo
     {
-        Task<GridFSFileInfo> Get(ObjectId Id);
+        Task<GridFSFileInfo> Get(string Id);
         Task<ObjectId> Add(string Filename, Stream stream, GridFSUploadOptions opt);
-        Task Delete(ObjectId Id);
-        Task Rename(ObjectId Id, string FileName);
+        Task Delete(string Id);
+        Task Rename(string Id, string FileName);
     }
 }

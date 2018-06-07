@@ -44,7 +44,7 @@ namespace OrganizerU.Controllers
                         foreach (Materia mat in us.Materias)
                         {
                             List<GridFSFileInfo> Ar = new List<GridFSFileInfo>();
-                            foreach(ObjectId Id in mat.Archivos)
+                            foreach(string Id in mat.Archivos)
                             {
                                 Ar.Add(await _archivo.Get(Id));
                             }
@@ -125,7 +125,7 @@ namespace OrganizerU.Controllers
                                     {
                                         return BadRequest("Ha Ocurrido Un Error Vuelva Intentar");
                                     }
-                                    mat.Archivos.Add(Idm);
+                                    mat.Archivos.Add(Idm.ToString());
                                     var h = await _estudiante.Update(UserId, es);
                                     if (h.MatchedCount > 0)
                                     {
@@ -169,9 +169,9 @@ namespace OrganizerU.Controllers
                     {
                         foreach (Materia mat in us.Materias)
                         {
-                            foreach (ObjectId Ids in mat.Archivos)
+                            foreach (string Ids in mat.Archivos)
                             {
-                                if(Ids == new ObjectId(Id))
+                                if(Ids.Equals(Id))
                                 {
                                    await _archivo.Rename(Ids, FileName);
                                     return Ok(JsonConvert.SerializeObject("Modificado"));
@@ -202,9 +202,9 @@ namespace OrganizerU.Controllers
                 {
                     foreach(Materia mat in us.Materias)
                     {
-                        foreach (ObjectId Ids in mat.Archivos)
+                        foreach (string Ids in mat.Archivos)
                         {
-                            if(new ObjectId(Id) == Ids)
+                            if(Id.Equals(Ids))
                             {
                                 await _archivo.Delete(Ids);
                                 mat.Archivos.Remove(Ids);
