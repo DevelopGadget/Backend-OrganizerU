@@ -79,8 +79,8 @@ namespace OrganizerU.Controllers {
             return Unauthorized ();
           }
         }
-      } catch (Exception) {
-        return BadRequest ("Ha Ocurrido Un Error Vuelva A Intentar");
+      } catch (Exception e) {
+        return BadRequest (e);
       }
     }
 

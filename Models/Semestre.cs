@@ -9,15 +9,15 @@ namespace OrganizerU.Models {
         public List<Materia> Materias { get; set; }
 
         [Required]
-        public int Semetre { get; set; }
+        public int SemestreC { get; set; }
 
         [Required]
         public int Num_Cortes { get; set; }
 
         [Required]
         public int[] Porcentajes_Cortes { get; set; }
-        public Semestre (string Id, int semetre, int num_Cortes, int[] Porcentajes_Cortes) {
-            this.Semetre = semetre;
+        public Semestre (int semestre, int num_Cortes, int[] Porcentajes_Cortes) {
+            this.SemestreC = semestre;
             this.Num_Cortes = num_Cortes;
             this.Porcentajes_Cortes = Porcentajes_Cortes;
             this.Materias = new List<Materia> ();
@@ -25,7 +25,7 @@ namespace OrganizerU.Models {
         public IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
             var Err = new List<ValidationResult> ();
             int total = 0;
-            if (Semetre <= 0) {
+            if (SemestreC <= 0) {
                 Err.Add (new ValidationResult ("El Semestre Tiene Que Ser Mayor A 0", new string[]{"1"}));
             }
             if (Num_Cortes <= 0) {

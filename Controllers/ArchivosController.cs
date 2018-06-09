@@ -54,9 +54,9 @@ namespace OrganizerU.Controllers
                     return StatusCode(StatusCodes.Status406NotAcceptable, "No Existe Esa Materia");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest("Hubo Un Error Vuelva Intentar");
+                return BadRequest(e);
             }
         }
         [HttpGet("{Id}")]
@@ -79,7 +79,7 @@ namespace OrganizerU.Controllers
                         {
                             if (mat.Id.Equals(Id))
                             {
-                                return Ok(JsonConvert.SerializeObject(await _archivo.Get(new ObjectId(Id))));
+                                return Ok(JsonConvert.SerializeObject(await _archivo.Get(Id)));
                             }
                         }
                     }

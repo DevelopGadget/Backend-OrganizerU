@@ -43,7 +43,7 @@ namespace OrganizerU.Controllers {
                     return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
                 } else {
                     foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == Sem) {
+                        if (us.SemestreC == Sem) {
                             return Ok (JsonConvert.SerializeObject (us.Materias));
                         }
                     }
@@ -83,7 +83,7 @@ namespace OrganizerU.Controllers {
                     Estudiante es = await _estudiante.Get (UserId);
                     if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == Semestre) {
+                        if (us.SemestreC == Semestre) {
                             materia.Cortes_Notas = new List<double>[us.Num_Cortes];
                             for (int i = 0; i < us.Num_Cortes; i++) {
                                 materia.Cortes_Notas[i] = new List<double> ();
@@ -117,7 +117,7 @@ namespace OrganizerU.Controllers {
                     Estudiante es = await _estudiante.Get (UserId);
                     if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == Semestre) {
+                        if (us.SemestreC == Semestre) {
                             for (int i = 0; i < us.Materias.Count; i++) {
                                 if (us.Materias[i].Id == Id) {
                                     for (int j = 0; j < materia.Horario.Length; j++) {
@@ -156,7 +156,7 @@ namespace OrganizerU.Controllers {
                     if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
                         foreach (Materia mat in us.Materias) {
-                            if (us.Semetre == Semestre && mat.Id == Id) {
+                            if (us.SemestreC == Semestre && mat.Id == Id) {
                                 us.Materias.Remove(mat);
                                 var h = await _estudiante.Update(UserId, es);
                                 if (h.MatchedCount > 0) {

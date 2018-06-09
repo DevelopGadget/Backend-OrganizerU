@@ -44,7 +44,7 @@ namespace OrganizerU.Controllers {
                 } else {
                     Semestre sem = null;
                     foreach (Semestre ex in es.Semestres) {
-                        if (ex.Semetre == Semestre) sem = ex;
+                        if (ex.SemestreC == Semestre) sem = ex;
                     }
                     if (sem == null) {
                         return StatusCode (StatusCodes.Status406NotAcceptable,"No Hay Documentos");
@@ -66,7 +66,7 @@ namespace OrganizerU.Controllers {
                     Estudiante es = await _estudiante.Get (UserId);
                     if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     foreach (Semestre us in es.Semestres) {
-                        if (us.Semetre == semestre.Semetre) return StatusCode (StatusCodes.Status406NotAcceptable,"Ya existe ese semestre");
+                        if (us.SemestreC == semestre.SemestreC) return StatusCode (StatusCodes.Status406NotAcceptable,"Ya existe ese semestre");
                     }
                     es.Semestres.Add (semestre);
                     var h = await _estudiante.Update (UserId, es);
@@ -90,9 +90,9 @@ namespace OrganizerU.Controllers {
                     Estudiante es = await _estudiante.Get (UserId);
                     if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                     for (int i = 0; i  < es.Semestres.Count; i++ )  {
-                        if (es.Semestres[i].Semetre == Semestre) {
+                        if (es.Semestres[i].SemestreC == Semestre) {
                             foreach(Semestre us in es.Semestres){
-                                if(us.Semetre == value.Semetre) return BadRequest ("Ya Existe Ese Semestre");
+                                if(us.SemestreC == value.SemestreC) return BadRequest ("Ya Existe Ese Semestre");
                             }
                             es.Semestres[i] = value;
                             var h = await _estudiante.Update (UserId, es);
@@ -116,7 +116,7 @@ namespace OrganizerU.Controllers {
                 Estudiante es = await _estudiante.Get (UserId);
                 if (es == null) return StatusCode(StatusCodes.Status406NotAcceptable, "No Hay Documentos");
                 foreach (Semestre us in es.Semestres) {
-                    if (Semestre == us.Semetre) {
+                    if (Semestre == us.SemestreC) {
                         es.Semestres.Remove (us);
                         var h = await _estudiante.Update (UserId, es);
                         if (h.MatchedCount > 0) {
